@@ -1,17 +1,18 @@
 package domain
 
 type LendBookRequest struct {
-	BookID      string `json:"book_id" binding:"required"`
-	StudentID   string `json:"student_id" binding:"required"`
-	StudentName string `json:"student_name" binding:"required"`
-	LentDate    string `json:"lent_date" binding:"required"`
-	DueDate     string `json:"due_date" binding:"required"`
-	LentType    string `json:"lent_type" binding:"required"`
+	BookID      string `json:"bookid" bson:"bookid"`
+	StudentID   string `json:"studentid" bson:"studentid"`
+	StudentName string `json:"studentname" bson:"studentname"`
+	LentDate    string `json:"lentdate" bson:"lentdate"`
+	DueDate     string `json:"duedate" bson:"duedate"`
+	LentType    string `json:"lenttype" bson:"lenttype"`
 }
 
 type ReturnBookRequest struct {
-	BookID          string `json:"book_id" binding:"required"`
-	StudentID       string `json:"student_id" binding:"required"`
-	ReturnStatus    string `json:"return_status" binding:"required"`
-	ReturnCondition string `json:"return_condition" binding:"required"`
+	BookID          string `json:"bookid" bson:"bookid"`
+	StudentID       string `json:"studentid" bson:"studentid"`
+	ReturnStatus    string `json:"returnstatus" bson:"returnstatus"`
+	ReturnCondition string `json:"returncondition" bson:"returncondition"`
+	ReturnDate      string `json:"returndate" bson:"returndate"`
 }

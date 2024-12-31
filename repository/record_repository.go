@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"librarybackend/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,6 +23,7 @@ func NewRecordRepository(db mongo.Database, collection string) domain.RecordRepo
 
 func (r *recordRepository) CreateRecord(student domain.Student, book domain.Book, lentdate string, duedate string, lenttype string, returnstatus string, returncondition string) (domain.Record, error) {
 	record := domain.Record{
+		ID:              primitive.NewObjectID(),
 		Student:         student,
 		Book:            book,
 		LentDate:        lentdate,
@@ -61,18 +64,35 @@ func (r *recordRepository) GetAllRecord() ([]domain.Record, error) {
 	return records, nil
 }
 
-func (r *recordRepository) UpdateRecord(studentid string, bookid string, returnstatus string, returncondition string) (domain.Record, error) {
-	record := domain.Record{
-		ReturnStatus:    returnstatus,
-		ReturnCondition: returncondition,
-	}
+func (r *recordRepository) UpdateRecord(studentid string, bookid string, returndate string, returnstatus string, returncondition string) (domain.Record, error) {
 
-	filter := bson.M{"student._SchoolID": studentid, "book._Bookid": bookid}
+	record, err := r.GetRecordByID(studentid, bookid)
+
+	if err != nil {
+		return domain.Record{}, err
+	}
+	record.ReturnStatus = returnstatus
+	record.ReturnCondition = returncondition
+	record.ReturnDate = returndate
+
+	filter := bson.M{"student.id": studentid, "book.bookid": bookid}
 	update := bson.M{
 		"$set": record,
 	}
-	_, err := r.database.Collection(r.collection).UpdateOne(context.TODO(), filter, update)
+	_, err = r.database.Collection(r.collection).UpdateOne(context.TODO(), filter, update)
 	if err != nil {
+		return domain.Record{}, err
+	}
+	return record, nil
+}
+
+func (r *recordRepository) GetRecordByID(studentid string, bookid string) (domain.Record, error) {
+	var record domain.Record
+	filter := bson.M{"student.id": studentid, "book.bookid": bookid}
+	err := r.database.Collection(r.collection).FindOne(context.TODO(), filter).Decode(&record)
+	if err != nil {
+		fmt.Println("Error in getting record", err)
+
 		return domain.Record{}, err
 	}
 	return record, nil

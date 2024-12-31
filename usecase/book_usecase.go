@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"librarybackend/domain"
 )
 
@@ -18,11 +19,21 @@ func NewBookUseCase(BookRepository domain.BookRepository, RecordRepository domai
 }
 
 func (p *BookUseCase) CreateBook(Book domain.Book) (domain.Book, error) {
-	if Book.Name == "" || Book.Author == "" || Book.Quantity == 0 || Book.Bookid == "" || Book.Course == "" || Book.PublicationDate == "" {
+
+	fmt.Println("Name:", Book.Name)
+	fmt.Println("Author:", Book.Author)
+	fmt.Println("Book ID:", Book.Bookid)
+	fmt.Println("Course:", Book.Course)
+	fmt.Println("Publication Date:", Book.PublicationDate)
+	fmt.Println("Quantity:", Book.Quantity)
+	if Book.Name == "" || Book.Author == "" || Book.Bookid == "" || Book.Course == "" || Book.PublicationDate == "" {
 		return domain.Book{}, errors.New("fill out all book details please")
 	}
+	if Book.Quantity == 0 {
+		return domain.Book{}, errors.New("atleast one book should be available")
+	}
 
-	_, err := p.BookRepository.CreateBook(Book)
+	Book, err := p.BookRepository.CreateBook(Book)
 	return Book, err
 }
 
@@ -59,7 +70,7 @@ func (p *BookUseCase) LendBook(bookid string, studentid string, studentname stri
 	if book.Quantity <= 0 {
 		return domain.Record{}, errors.New("book is not available")
 	}
-	book, err = p.BookRepository.LendBook(bookid, studentid, studentname)
+	err = p.BookRepository.LendBook(bookid, studentid, studentname)
 	if err != nil {
 		return domain.Record{}, err
 	}
@@ -78,13 +89,27 @@ func (p *BookUseCase) LendBook(bookid string, studentid string, studentname stri
 	return record, nil
 }
 
-func (p *BookUseCase) ReturnBook(bookid string, studentid string, returnstatus string, returncondition string) error {
-	_, err := p.BookRepository.ReturnBook(bookid, studentid)
+func (p *BookUseCase) ReturnBook(bookid string, studentid string, returndate string, returnstatus string, returncondition string) error {
+
+	record, err := p.RecordRepository.GetRecordByID(studentid, bookid)
+
 	if err != nil {
 		return err
 	}
 
-	_, err = p.RecordRepository.UpdateRecord(studentid, bookid, returnstatus, returncondition)
+	if record.ReturnStatus == "Returned" {
+		return errors.New("book is already returned")
+	}
+
+	err = p.BookRepository.ReturnBook(bookid, studentid)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.RecordRepository.UpdateRecord(studentid, bookid, returndate, returnstatus, returncondition)
 
 	return err
+}
+func (p *BookUseCase) GetRecord() ([]domain.Record, error) {
+	return p.RecordRepository.GetAllRecord()
 }

@@ -33,8 +33,8 @@ func LoadEnv() (*Config, error) {
 	portStr := os.Getenv("PORT")
 	dbname := os.Getenv("DB_NAME")
 	usercoll := os.Getenv("user_collection")
-	bookColl := os.Getenv("order_collection")
-	recordColl := os.Getenv("product_collection")
+	bookColl := os.Getenv("book_collection")
+	recordColl := os.Getenv("record_collection")
 	contextTimeoutStr := os.Getenv("CONTEXT_TIMEOUT")
 	accessTokenExpiryHourStr := os.Getenv("ACCESS_TOKEN_EXPIRY_HOUR")
 	refreshTokenExpiryHourStr := os.Getenv("REFRESH_TOKEN_EXPIRY_HOUR")
@@ -50,7 +50,7 @@ func LoadEnv() (*Config, error) {
 
 	contextTimeout, err := strconv.Atoi(contextTimeoutStr)
 	if err != nil {
-		log.Fatal("Invalid CONTEXT_TIMEOUT value")
+		log.Fatal("Invalid CONTEXT_TIMEOUT value ")
 		return nil, err
 	}
 

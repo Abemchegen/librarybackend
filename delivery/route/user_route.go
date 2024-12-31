@@ -28,11 +28,8 @@ func NewUserRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Datab
 	user := route.Group("/user")
 	{
 
-		//user/register
 		user.POST("/register", userController.CreateAccount)
 		user.POST("/login", userController.Login)
-
-		user.Use(infrastracture.AuthMiddleware())
 
 	}
 

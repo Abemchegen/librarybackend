@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"librarybackend/domain"
 
 	"github.com/gin-gonic/gin"
@@ -64,7 +65,8 @@ func (p *BookController) UpdateBook(c *gin.Context) {
 }
 
 func (p *BookController) DeleteBook(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
+	fmt.Println(id)
 	deletedBook, err := p.BookUsecase.DeleteBook(id)
 	if err != nil {
 		c.JSON(400, gin.H{"status": 400, "message": "Failed to delete Book", "error": err.Error()})
@@ -79,6 +81,7 @@ func (p *BookController) LendBook(c *gin.Context) {
 		c.JSON(400, gin.H{"status": 400, "message": "Invalid input", "error": err.Error()})
 		return
 	}
+	fmt.Println(request.BookID)
 
 	record, err := p.BookUsecase.LendBook(
 		request.BookID,
@@ -102,11 +105,20 @@ func (p *BookController) ReturnBook(c *gin.Context) {
 		c.JSON(400, gin.H{"status": 400, "message": "Invalid input", "error": err.Error()})
 		return
 	}
+	fmt.Println(request)
 
-	err := p.BookUsecase.ReturnBook(request.BookID, request.StudentID, request.ReturnStatus, request.ReturnCondition)
+	err := p.BookUsecase.ReturnBook(request.BookID, request.StudentID, request.ReturnDate, request.ReturnStatus, request.ReturnCondition)
 	if err != nil {
 		c.JSON(400, gin.H{"status": 400, "message": "Failed to return book", "error": err.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"status": 200, "message": "Book returned successfully"})
+}
+func (p *BookController) GetRecord(c *gin.Context) {
+	record, err := p.BookUsecase.GetRecord()
+	if err != nil {
+		c.JSON(400, gin.H{"status": 400, "message": "Failed to retrieve record", "error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"status": 200, "message": "Book retrieved successfully", "data": record})
 }

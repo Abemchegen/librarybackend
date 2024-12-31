@@ -7,8 +7,8 @@ type Book struct {
 	Name            string             `json:"name" bson:"name"`
 	Author          string             `json:"author" bson:"author"`
 	Course          string             `json:"course" bson:"course"`
-	PublicationDate string             `json:"publication_date" bson:"publication_date"`
-	Quantity        int                `json:"copies" bson:"copies"`
+	PublicationDate string             `json:"publicationdate" bson:"publicationdate"`
+	Quantity        int                `json:"quantity" bson:"quantity"`
 	Bookid          string             `json:"bookid" bson:"bookid"`
 }
 
@@ -19,7 +19,8 @@ type BookUseCase interface {
 	UpdateBook(Book Book) (Book, error)
 	DeleteBook(id string) (Book, error)
 	LendBook(bookid string, studentid string, studentname string, lentdate string, duedate string, lenttype string) (Record, error)
-	ReturnBook(bookid string, studentid string, returnstatus string, returncondition string) error
+	ReturnBook(bookid string, studentid string, returndate string, returnstatus string, returncondition string) error
+	GetRecord() ([]Record, error)
 }
 
 type BookRepository interface {
@@ -28,6 +29,6 @@ type BookRepository interface {
 	GetBookByID(id string) (Book, error)
 	UpdateBook(Book Book) (Book, error)
 	DeleteBook(id string) (Book, error)
-	LendBook(bookid string, studentid string, studentname string) (Book, error)
-	ReturnBook(bookid string, studentid string) (Book, error)
+	LendBook(bookid string, studentid string, studentname string) error
+	ReturnBook(bookid string, studentid string) error
 }

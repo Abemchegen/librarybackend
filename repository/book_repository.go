@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"librarybackend/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,11 +47,7 @@ func (p *BookRepository) GetAllBook() ([]domain.Book, error) {
 
 func (p *BookRepository) GetBookByID(id string) (domain.Book, error) {
 	var Book domain.Book
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return domain.Book{}, err
-	}
-	err = p.database.Collection(p.collection).FindOne(context.Background(), bson.M{"_id": objID}).Decode(&Book)
+	err := p.database.Collection(p.collection).FindOne(context.Background(), bson.M{"bookid": id}).Decode(&Book)
 	if err != nil {
 		return domain.Book{}, err
 	}
@@ -68,51 +65,46 @@ func (p *BookRepository) UpdateBook(Book domain.Book) (domain.Book, error) {
 func (p *BookRepository) DeleteBook(id string) (domain.Book, error) {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		fmt.Println("Error in converting id to object id: %v", err)
 		return domain.Book{}, err
 	}
 	var Book domain.Book
 	err = p.database.Collection(p.collection).FindOneAndDelete(context.Background(), bson.M{"_id": objID}).Decode(&Book)
 	if err != nil {
+		fmt.Printf("error in mongo: %v", err)
 		return domain.Book{}, err
 	}
 	return Book, nil
 }
-func (p *BookRepository) LendBook(bookid string, studentid string, studentname string) (domain.Book, error) {
-	objID, err := primitive.ObjectIDFromHex(bookid)
-	if err != nil {
-		return domain.Book{}, err
-	}
-	_, err = p.database.Collection(p.collection).UpdateOne(
+func (p *BookRepository) LendBook(id string, studentid string, studentname string) error {
+
+	_, err := p.database.Collection(p.collection).UpdateOne(
 		context.Background(),
-		bson.M{"_id": objID},
+		bson.M{"_id": id},
 		bson.M{"$inc": bson.M{"Quantity": -1}},
 	)
 	if err != nil {
-		return domain.Book{}, nil
+		return nil
 	}
 
-	book, err := p.GetBookByID(bookid)
-
-	return book, err
+	return err
 }
 
-func (p *BookRepository) ReturnBook(bookid string, studentid string) (domain.Book, error) {
-	objID, err := primitive.ObjectIDFromHex(bookid)
+func (p *BookRepository) ReturnBook(bookid string, studentid string) error {
+	_, err := p.GetBookByID(bookid)
+
 	if err != nil {
-		return domain.Book{}, err
-	}
-	_, err = p.database.Collection(p.collection).UpdateOne(
-		context.Background(),
-		bson.M{"_id": objID, "lent_to": studentid},
-		bson.M{"$inc": bson.M{"Quantity": 1}},
-	)
-	if err != nil {
-		return domain.Book{}, nil
+		return err
 	}
 
-	book, err := p.GetBookByID(bookid)
+	_, err = p.database.Collection(p.collection).UpdateOne(
+		context.Background(),
+		bson.M{"_id": bookid},
+		bson.M{"$inc": bson.M{"Quantity": 1}})
+
 	if err != nil {
-		return domain.Book{}, err
+		return nil
 	}
-	return book, nil
+
+	return nil
 }

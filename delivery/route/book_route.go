@@ -19,16 +19,17 @@ func NewBookRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Datab
 	BookUsecase := usecase.NewBookUseCase(BookRepository, RecordRepository)
 	BookController := controller.NewBookController(BookUsecase)
 
-	BookRouter := route.Group("/Book")
+	BookRouter := route.Group("/book")
 	BookRouter.Use(infrastracture.AuthMiddleware())
 	{
 		BookRouter.POST("/", BookController.CreateBook)
 		BookRouter.GET("/", BookController.GetAllBook)
 		BookRouter.GET("/:id", BookController.GetBookByID)
-		BookRouter.PUT("/:id", BookController.UpdateBook)
-		BookRouter.DELETE("/:id", BookController.DeleteBook)
+		BookRouter.PUT("/", BookController.UpdateBook)
+		BookRouter.DELETE("/", BookController.DeleteBook)
 		BookRouter.POST("/lend", BookController.LendBook)
 		BookRouter.POST("/return", BookController.ReturnBook)
+		BookRouter.GET("/record", BookController.GetRecord)
 
 	}
 
