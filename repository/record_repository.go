@@ -97,3 +97,32 @@ func (r *recordRepository) GetRecordByID(studentid string, bookid string) (domai
 	}
 	return record, nil
 }
+
+func (r *recordRepository) BooksBorrowed(studentID string) ([]domain.Record, error) {
+	ctx := context.Background()
+
+	filter := bson.M{
+		"student.id": studentID,
+	}
+
+	cursor, err := r.database.Collection(r.collection).Find(ctx, filter)
+	if err != nil {
+		return []domain.Record{}, err
+	}
+	defer cursor.Close(ctx)
+
+	var Books []domain.Record
+	for cursor.Next(ctx) {
+		var record domain.Record
+		if err := cursor.Decode(&record); err != nil {
+			return nil, err
+		}
+		Books = append(Books, record)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return Books, nil
+}

@@ -10,6 +10,7 @@ type Book struct {
 	PublicationDate string             `json:"publicationdate" bson:"publicationdate"`
 	Quantity        int                `json:"quantity" bson:"quantity"`
 	Bookid          string             `json:"bookid" bson:"bookid"`
+	Image           string             `json:"image" bson:"image"`
 }
 
 type BookUseCase interface {
@@ -21,6 +22,7 @@ type BookUseCase interface {
 	LendBook(bookid string, studentid string, studentname string, lentdate string, duedate string, lenttype string) (Record, error)
 	ReturnBook(bookid string, studentid string, returndate string, returnstatus string, returncondition string) error
 	GetRecord() ([]Record, error)
+	BooksBorrowed(id string) ([]Record, ErrorResponse)
 }
 
 type BookRepository interface {

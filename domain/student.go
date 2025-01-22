@@ -3,6 +3,7 @@ package domain
 type Student struct {
 	Name     string `json:"name" bson:"name"`
 	SchoolID string `json:"id" bson:"id"`
+	Image    string `json:"image" bson:"image"`
 }
 
 type StudentUseCase interface {
@@ -10,6 +11,7 @@ type StudentUseCase interface {
 	LeaveLibrary(Student Student) (SuccessResponse, ErrorResponse)
 	GetStudentActivity() ([]Activity, ErrorResponse)
 	GetUniqueStudentCountPerDay() (map[string]int, ErrorResponse)
+	GetCurrentVisitors() ([]Activity, ErrorResponse)
 }
 
 type StudentRepository interface {
@@ -17,4 +19,5 @@ type StudentRepository interface {
 	LeaveLibrary(Student Student) error
 	GetStudentActivity() ([]Activity, error)
 	GetUniqueStudentCountPerDay() (map[string]int, error)
+	GetCurrentVisitors() ([]Activity, error)
 }

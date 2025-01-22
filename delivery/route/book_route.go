@@ -30,6 +30,7 @@ func NewBookRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Datab
 		BookRouter.POST("/lend", BookController.LendBook)
 		BookRouter.POST("/return", BookController.ReturnBook)
 		BookRouter.GET("/record", BookController.GetRecord)
+		BookRouter.GET("/booksborrowed", BookController.BooksBorrowed)
 
 	}
 

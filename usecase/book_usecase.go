@@ -113,3 +113,14 @@ func (p *BookUseCase) ReturnBook(bookid string, studentid string, returndate str
 func (p *BookUseCase) GetRecord() ([]domain.Record, error) {
 	return p.RecordRepository.GetAllRecord()
 }
+
+func (p *BookUseCase) BooksBorrowed(id string) ([]domain.Record, domain.ErrorResponse) {
+
+	result, err := p.RecordRepository.BooksBorrowed(id)
+
+	if err != nil {
+		return []domain.Record{}, domain.ErrorResponse{Message: "books this student borrowed can't be retrieved", Status: 404}
+	}
+
+	return result, domain.ErrorResponse{}
+}

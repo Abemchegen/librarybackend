@@ -18,8 +18,9 @@ func NewStudentController(StudentUsecase domain.StudentUseCase) *StudentControll
 func (uc *StudentController) EnterLibrary(c *gin.Context) {
 	id := c.Query("id")
 	name := c.Query("name")
+	image := c.Query("image")
 
-	s := domain.Student{Name: name, SchoolID: id}
+	s := domain.Student{Name: name, SchoolID: id, Image: image}
 	fmt.Printf(s.Name, s.SchoolID)
 
 	_, err := uc.StudentUsecase.EnterLibrary(s)
@@ -39,8 +40,9 @@ func (uc *StudentController) EnterLibrary(c *gin.Context) {
 func (uc *StudentController) LeaveLibrary(c *gin.Context) {
 	id := c.Query("id")
 	name := c.Query("name")
+	image := c.Query("image")
 
-	s := domain.Student{Name: name, SchoolID: id}
+	s := domain.Student{Name: name, SchoolID: id, Image: image}
 
 	_, err := uc.StudentUsecase.LeaveLibrary(s)
 	if err.Message != "" {
@@ -89,6 +91,25 @@ func (uc *StudentController) GetUniqueStudentCountPerDay(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status":  200,
 		"message": "uniques student count retrieved",
+		"data":    result,
+	})
+
+}
+
+func (uc *StudentController) GetCurrentVisitors(c *gin.Context) {
+
+	result, err := uc.StudentUsecase.GetCurrentVisitors()
+
+	if err.Message != "" {
+		c.JSON(400, gin.H{
+			"status":  err.Status,
+			"message": err.Message,
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "current visiters retrieved",
 		"data":    result,
 	})
 

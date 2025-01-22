@@ -19,4 +19,5 @@ type RecordRepository interface {
 	GetAllRecord() ([]Record, error)
 	UpdateRecord(studentid string, bookid string, returndate string, returnstatus string, returncondition string) (Record, error)
 	GetRecordByID(studentid string, bookid string) (Record, error)
+	BooksBorrowed(id string) ([]Record, error)
 }

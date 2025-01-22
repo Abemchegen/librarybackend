@@ -58,3 +58,13 @@ func (uc *StudentUseCase) GetUniqueStudentCountPerDay() (map[string]int, domain.
 
 	return result, domain.ErrorResponse{}
 }
+func (uc *StudentUseCase) GetCurrentVisitors() ([]domain.Activity, domain.ErrorResponse) {
+
+	result, err := uc.StudentRepository.GetCurrentVisitors()
+
+	if err != nil {
+		return []domain.Activity{}, domain.ErrorResponse{Message: "current visitors can't be retrieved", Status: 404}
+	}
+
+	return result, domain.ErrorResponse{}
+}

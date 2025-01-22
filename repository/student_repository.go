@@ -164,3 +164,34 @@ func (ur *StudentRepository) GetUniqueStudentCountPerDay() (map[string]int, erro
 
 	return results, nil
 }
+
+func (ur *StudentRepository) GetCurrentVisitors() ([]domain.Activity, error) {
+	ctx := context.Background()
+	collection := ur.database.Collection(ur.collection)
+
+	// Filter: leavetime is nil
+	filter := bson.M{"leavetime": nil}
+
+	// Find all documents matching the filter
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Parse the results
+	var currentVisitors []domain.Activity
+	for cursor.Next(ctx) {
+		var activity domain.Activity
+		if err := cursor.Decode(&activity); err != nil {
+			return nil, err
+		}
+		currentVisitors = append(currentVisitors, activity)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return currentVisitors, nil
+}

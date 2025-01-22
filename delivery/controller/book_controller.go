@@ -124,5 +124,26 @@ func (p *BookController) GetRecord(c *gin.Context) {
 		c.JSON(400, gin.H{"status": 400, "message": "Failed to retrieve record", "error": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"status": 200, "message": "Book retrieved successfully", "data": record})
+	c.JSON(200, gin.H{"status": 200, "message": "records retrieved successfully", "data": record})
+}
+
+func (uc *BookController) BooksBorrowed(c *gin.Context) {
+
+	id := c.Query("id")
+
+	result, err := uc.BookUsecase.BooksBorrowed(id)
+
+	if err.Message != "" {
+		c.JSON(400, gin.H{
+			"status":  err.Status,
+			"message": err.Message,
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "books borrowed by a student retrieved",
+		"data":    result,
+	})
+
 }
