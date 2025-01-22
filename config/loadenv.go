@@ -15,6 +15,7 @@ type Config struct {
 	UserCollection         string
 	BookCollection         string
 	RecordCollection       string
+	StudentCollection      string
 	ContextTimeout         int
 	AccessTokenExpiryHour  int
 	RefreshTokenExpiryHour int
@@ -34,6 +35,7 @@ func LoadEnv() (*Config, error) {
 	dbname := os.Getenv("DB_NAME")
 	usercoll := os.Getenv("user_collection")
 	bookColl := os.Getenv("book_collection")
+	studentColl := os.Getenv("student_collection")
 	recordColl := os.Getenv("record_collection")
 	contextTimeoutStr := os.Getenv("CONTEXT_TIMEOUT")
 	accessTokenExpiryHourStr := os.Getenv("ACCESS_TOKEN_EXPIRY_HOUR")
@@ -76,9 +78,10 @@ func LoadEnv() (*Config, error) {
 		AccessTokenSecret:      accessTokenSecret,
 		RefreshTokenSecret:     refreshTokenSecret,
 
-		UserCollection:   usercoll,
-		BookCollection:   bookColl,
-		RecordCollection: recordColl,
+		UserCollection:    usercoll,
+		BookCollection:    bookColl,
+		RecordCollection:  recordColl,
+		StudentCollection: studentColl,
 	}
 
 	return config, nil

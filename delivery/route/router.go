@@ -11,5 +11,6 @@ func Router(route *gin.RouterGroup, config *config.Config, DB mongo.Database) {
 
 	NewUserRouter(route, config, DB)
 	NewBookRouter(route, config, DB)
+	NewStudentRouter(route, config, DB)
 
 }
