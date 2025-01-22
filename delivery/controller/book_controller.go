@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"librarybackend/domain"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +42,10 @@ func (p *BookController) GetAllBook(c *gin.Context) {
 }
 
 func (p *BookController) GetBookByID(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
+	log.Println(id, "here")
+	fmt.Printf(id, "dkjflsdjkf")
+
 	Book, err := p.BookUsecase.GetBookByID(id)
 	if err != nil {
 		c.JSON(400, gin.H{"status": 400, "message": "Failed to retrieve Book", "error": err.Error()})

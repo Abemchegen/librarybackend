@@ -47,3 +47,14 @@ func (uc *StudentUseCase) GetStudentActivity() ([]domain.Activity, domain.ErrorR
 
 	return Students, domain.ErrorResponse{}
 }
+
+func (uc *StudentUseCase) GetUniqueStudentCountPerDay() (map[string]int, domain.ErrorResponse) {
+
+	result, err := uc.StudentRepository.GetUniqueStudentCountPerDay()
+
+	if err != nil {
+		return make(map[string]int), domain.ErrorResponse{Message: "count can't be retrieved", Status: 404}
+	}
+
+	return result, domain.ErrorResponse{}
+}

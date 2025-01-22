@@ -93,3 +93,74 @@ func (ur *StudentRepository) GetStudentActivity() ([]domain.Activity, error) {
 
 	return activities, nil
 }
+
+func (ur *StudentRepository) GetUniqueStudentCountPerDay() (map[string]int, error) {
+	ctx := context.Background()
+
+	collection := ur.database.Collection(ur.collection)
+
+	// MongoDB aggregation pipeline
+	pipeline := mongo.Pipeline{
+		// Step 1: Add a date-only field from `entrytime`
+		{
+			{
+				Key: "$addFields", Value: bson.D{
+					{Key: "date", Value: bson.M{
+						"$dateToString": bson.M{
+							"format": "%Y-%m-%d", // Format as YYYY-MM-DD
+							"date":   "$entrytime",
+						},
+					}},
+				},
+			},
+		},
+		// Step 2: Group by date and student ID
+		{
+			{
+				Key: "$group", Value: bson.D{
+					{Key: "_id", Value: bson.D{
+						{Key: "date", Value: "$date"},
+						{Key: "studentid", Value: "$studentid"},
+					}},
+				},
+			},
+		},
+		// Step 3: Group by date again to count unique students
+		{
+			{
+				Key: "$group", Value: bson.D{
+					{Key: "_id", Value: "$_id.date"},
+					{Key: "uniqueStudents", Value: bson.D{
+						{Key: "$sum", Value: 1},
+					}},
+				},
+			},
+		},
+	}
+
+	// Execute the aggregation
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Parse the results
+	results := make(map[string]int)
+	for cursor.Next(ctx) {
+		var result struct {
+			Date           string `bson:"_id"`
+			UniqueStudents int    `bson:"uniqueStudents"`
+		}
+		if err := cursor.Decode(&result); err != nil {
+			return nil, err
+		}
+		results[result.Date] = result.UniqueStudents
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}

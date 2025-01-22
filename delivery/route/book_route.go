@@ -23,8 +23,8 @@ func NewBookRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Datab
 	BookRouter.Use(infrastracture.AuthMiddleware())
 	{
 		BookRouter.POST("/", BookController.CreateBook)
-		BookRouter.GET("/", BookController.GetAllBook)
-		BookRouter.GET("/:id", BookController.GetBookByID)
+		BookRouter.GET("/all", BookController.GetAllBook)
+		BookRouter.GET("/", BookController.GetBookByID)
 		BookRouter.PUT("/", BookController.UpdateBook)
 		BookRouter.DELETE("/", BookController.DeleteBook)
 		BookRouter.POST("/lend", BookController.LendBook)

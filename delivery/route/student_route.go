@@ -22,6 +22,7 @@ func NewStudentRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Da
 		Student.GET("/enterlibrary", StudentController.EnterLibrary)
 		Student.GET("/leavelibrary", StudentController.LeaveLibrary)
 		Student.GET("/getactivity", StudentController.GetStudentActivity)
+		Student.GET("/getcount", StudentController.GetUniqueStudentCountPerDay)
 
 	}
 

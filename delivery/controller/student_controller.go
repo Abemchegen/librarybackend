@@ -74,3 +74,22 @@ func (uc *StudentController) GetStudentActivity(c *gin.Context) {
 
 		"data": result})
 }
+
+func (uc *StudentController) GetUniqueStudentCountPerDay(c *gin.Context) {
+
+	result, err := uc.StudentUsecase.GetUniqueStudentCountPerDay()
+
+	if err.Message != "" {
+		c.JSON(400, gin.H{
+			"status":  err.Status,
+			"message": err.Message,
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "uniques student count retrieved",
+		"data":    result,
+	})
+
+}
